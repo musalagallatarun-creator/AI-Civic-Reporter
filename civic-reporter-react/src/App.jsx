@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-const API_URL = 'http://localhost:8080/api/complaints'
-const PHOTO_URL = 'http://localhost:8080/api/photos'
+const API_URL = 'https://ai-civic-reporter-backend.onrender.com/api/complaints'
+const PHOTO_URL = 'https://ai-civic-reporter-backend.onrender.com/api/photos'
 
 function App() {
   const [complaints, setComplaints] = useState([])
