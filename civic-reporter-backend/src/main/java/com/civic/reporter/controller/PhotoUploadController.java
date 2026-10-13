@@ -31,42 +31,52 @@ import org.springframework.web.server.ResponseStatusException;
     "http://localhost:5175",
     "http://127.0.0.1:5175",
     "http://localhost:5500",
-    "http://127.0.0.1:5500"
+    "http://127.0.0.1:5500",
+    "https://ai-civic-reporter-theta.vercel.app"
 })
 @RestController
 @RequestMapping("/api/photos")
 public class PhotoUploadController {
 
-    private final Path uploadDir = Paths.get("uploads").toAbsolutePath().normalize();
+    private final Path uploadDir =
+        Paths.get("uploads").toAbsolutePath().normalize();
 
     @PostMapping("/upload")
-    public String uploadPhoto(@RequestParam("photo") MultipartFile photo) {
+    public String uploadPhoto(
+            @RequestParam("photo") MultipartFile photo) {
+
         try {
-            if (photo.isEmpty()) {
+            if (photo == null || photo.isEmpty()) {
                 throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Please select a photo"
+                    HttpStatus.BAD_REQUEST,
+                    "Please select a photo"
                 );
             }
 
             String contentType = photo.getContentType();
 
-            if (contentType == null || !contentType.startsWith("image/")) {
+            if (contentType == null
+                    || !contentType.startsWith("image/")) {
                 throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Only image files are allowed"
+                    HttpStatus.BAD_REQUEST,
+                    "Only image files are allowed"
                 );
             }
 
             Files.createDirectories(uploadDir);
 
-            String originalName = photo.getOriginalFilename() == null
-                ? "image"
-                : Paths.get(photo.getOriginalFilename()).getFileName().toString();
+            String originalName =
+                photo.getOriginalFilename() == null
+                    ? "image"
+                    : Paths.get(photo.getOriginalFilename())
+                        .getFileName().toString();
 
             String extension = "";
-
             int dot = originalName.lastIndexOf('.');
+
             if (dot >= 0) {
-                extension = originalName.substring(dot).replaceAll("[^a-zA-Z0-9.]", "");
+                extension = originalName.substring(dot)
+                    .replaceAll("[^a-zA-Z0-9.]", "");
             }
 
             String fileName = UUID.randomUUID() + extension;
@@ -74,7 +84,8 @@ public class PhotoUploadController {
 
             if (!target.startsWith(uploadDir)) {
                 throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Invalid file name"
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid file name"
                 );
             }
 
@@ -95,13 +106,17 @@ public class PhotoUploadController {
     }
 
     @GetMapping("/{fileName:.+}")
-    public ResponseEntity<Resource> getPhoto(@PathVariable String fileName) {
+    public ResponseEntity<Resource> getPhoto(
+            @PathVariable String fileName) {
+
         try {
             Path filePath = uploadDir.resolve(fileName).normalize();
 
-            if (!filePath.startsWith(uploadDir) || !Files.isRegularFile(filePath)) {
+            if (!filePath.startsWith(uploadDir)
+                    || !Files.isRegularFile(filePath)) {
                 throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Photo not found"
+                    HttpStatus.NOT_FOUND,
+                    "Photo not found"
                 );
             }
 
@@ -119,7 +134,8 @@ public class PhotoUploadController {
 
         } catch (IOException e) {
             throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND, "Photo not found"
+                HttpStatus.NOT_FOUND,
+                "Photo not found"
             );
         }
     }
