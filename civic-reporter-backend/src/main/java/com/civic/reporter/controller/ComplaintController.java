@@ -27,7 +27,8 @@ import com.civic.reporter.repository.ComplaintRepository;
     "http://localhost:5175",
     "http://127.0.0.1:5175",
     "http://localhost:5500",
-    "http://127.0.0.1:5500"
+    "http://127.0.0.1:5500",
+    "https://ai-civic-reporter-theta.vercel.app"
 })
 @RestController
 @RequestMapping("/api/complaints")
@@ -35,7 +36,8 @@ public class ComplaintController {
 
     private final ComplaintRepository complaintRepository;
 
-    public ComplaintController(ComplaintRepository complaintRepository) {
+    public ComplaintController(
+            ComplaintRepository complaintRepository) {
         this.complaintRepository = complaintRepository;
     }
 
@@ -54,9 +56,11 @@ public class ComplaintController {
     }
 
     @PostMapping
-    public Complaint createComplaint(@RequestBody Complaint complaint) {
-        if (complaint.getStatus() == null ||
-                complaint.getStatus().isBlank()) {
+    public Complaint createComplaint(
+            @RequestBody Complaint complaint) {
+
+        if (complaint.getStatus() == null
+                || complaint.getStatus().isBlank()) {
             complaint.setStatus("PENDING");
         }
 
@@ -75,7 +79,9 @@ public class ComplaintController {
             ));
 
         try {
-            complaint.setDeadline(LocalDateTime.parse(deadline));
+            complaint.setDeadline(
+                LocalDateTime.parse(deadline)
+            );
         } catch (Exception e) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
